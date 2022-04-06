@@ -1,5 +1,9 @@
 #include <iostream>
-#include <utility>
+
+struct cell {
+    int row;
+    int column;
+};
 
 enum player {attack, defense};
 
@@ -12,8 +16,8 @@ public:
     void init_board ();
     void  print_board ();
     void  print_board_row (int );
-    char get_cell(int, int);
-    void change_cell(int, int, char);
+    char get_cell(cell);
+    void change_cell(cell, char);
 };
 
 class UI {
@@ -25,7 +29,7 @@ public:
     void print_board (Board&);
     int get_row_coord (char);
     int get_column_coord (int);
-    std::pair<int, int> choose_piece (Board&, player);
+    cell choose_piece (Board&, player);
     void move_piece (Board&, player);
 };
 
@@ -77,11 +81,12 @@ void Board::print_board_row (int row) {
     }
 }
 
-char Board::get_cell(int row, int column){
-    return board[row][column];
+char Board::get_cell(cell coord){
+    return board[coord.row][coord.column];
 }
-void Board::change_cell(int row, int column, char c){
-    board[row][column]=c;
+
+void Board::change_cell(cell coord, char c){
+    board[coord.row][coord.column]=c;
 }
 
 void UI::print_board (Board& board) {
@@ -101,23 +106,23 @@ int UI::get_column_coord(int column){
     return column - 1;
 }
 
-std::pair<int, int> UI::choose_piece (Board& board, player curent_player){
+cell UI::choose_piece (Board& board, player curent_player){
     bool correct_input = false;
     char user_row;
     int user_column;
-    int row, column;
+    cell cell;
     while (!correct_input) {
         std::cout << "Enter a row and column of piece:" << '\n';
         std::cin >> user_row >> user_column;
-        row = get_row_coord(user_row);
-        column = get_column_coord(user_column);
-        switch (board.get_cell(row,column)) {
+        cell.row = get_row_coord(user_row);
+        cell.column = get_column_coord(user_column);
+        switch (board.get_cell(cell)) {
             case ' ':
                 std::cout << "Please choose piece" << '\n';
                 break;
             case 'a':
                 if (curent_player == attack){
-                    board.change_cell(row, column, 'A');
+                    board.change_cell(cell, 'A');
                     correct_input = true;
                     break;
                 } else {
@@ -126,7 +131,7 @@ std::pair<int, int> UI::choose_piece (Board& board, player curent_player){
                 }
             case 'd':
             if (curent_player == defense){
-                board.change_cell(row, column, 'D');
+                board.change_cell(cell, 'D');
                 correct_input = true;
                 break;
             } else {
@@ -135,7 +140,7 @@ std::pair<int, int> UI::choose_piece (Board& board, player curent_player){
             }
             case 'k':
             if (curent_player == attack){
-                board.change_cell(row, column, 'K');
+                board.change_cell(cell, 'K');
                 correct_input = true;
                 break;
             } else {
@@ -144,35 +149,35 @@ std::pair<int, int> UI::choose_piece (Board& board, player curent_player){
             }
         }
     }
-    std::pair<int, int> coord {row, column};
-    return coord;
+    return cell;
 }
 
 void UI::move_piece (Board& board, player curent_player){
-    std::pair<int, int> start_coord = choose_piece(board, curent_player);
+    cell start_coord = choose_piece(board, curent_player);
     print_board(board);
-    std::pair<char, int> user_end_coord;
-    std::pair<int, int> end_coord;
+    char user_end_row;
+    int user_end_column;
+    cell end_coord;
     bool correct_input = false;
-    char piece = board.get_cell(start_coord.first, start_coord.second);
+    char piece = board.get_cell(start_coord);
     while (!correct_input) {
         std::cout << "Enter row and column" << '\n';
-        std::cin >> user_end_coord.first >> user_end_coord.second;
-        end_coord.first = get_row_coord(user_end_coord.first);
-        end_coord.second = get_column_coord(user_end_coord.second);
-        if (board.get_cell(end_coord.first, end_coord.second ) == ' '){
+        std::cin >> user_end_row >> user_end_column;
+        end_coord.row = get_row_coord(user_end_row);
+        end_coord.column = get_column_coord(user_end_column);
+        if (board.get_cell(end_coord) == ' '){
             switch (piece) {
                 case 'K':
-                board.change_cell(end_coord.first, end_coord.second, 'k');
+                board.change_cell(end_coord, 'k');
                 break;
                 case 'A':
-                board.change_cell(end_coord.first, end_coord.second, 'a');
+                board.change_cell(end_coord, 'a');
                 break;
                 case 'D':
-                board.change_cell(end_coord.first, end_coord.second, 'd');
+                board.change_cell(end_coord, 'd');
                 break;
             }
-            board.change_cell(start_coord.first, start_coord.second, ' ');
+            board.change_cell(start_coord, ' ');
             correct_input = true;
         } else {
             std::cout << "Please choose free cell" << '\n';
