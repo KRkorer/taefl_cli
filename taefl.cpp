@@ -233,7 +233,7 @@ bool Taefl::is_choose_correct (Board& board, cell cell, player curent_player){
 bool Taefl::is_move_correct (Board& board, cell begin, cell end) {
     switch (board.get_piece(begin)) {
         case 'A':
-        if ((board.get_piece(end) == ' ') and (begin != cell {4, 4})){
+        if ((board.get_piece(end) == ' ') and (end != cell {4, 4})){
             if (begin.row == end.row) {
                 for (int i = 1; i < abs(end.column-begin.column); ++i) {
                     if (end.column > begin.column) {
