@@ -12,7 +12,6 @@ enum player {attack, defense};
 class Board {
 private:
     char board[9][9];
-
 public:
     Board ();
     void init_board ();
@@ -21,12 +20,11 @@ public:
     char get_cell (cell);
     void change_cell (cell, char);
     cell get_king_cell ();
+    void del_piece (cell);
 };
 
 class UI {
 private:
-
-
 
 public:
     void print_board (Board&);
@@ -47,8 +45,9 @@ public:
     bool is_attack_win (Board&);
     player get_curent_player ();
     void change_player ();
-    bool is_choose_correct (Board, cell, player);
-    bool is_move_correct (Board, cell, cell);
+    bool is_choose_correct (Board&, cell, player);
+    bool is_move_correct (Board&, cell, cell);
+    void eat_pieces (Board&);
 };
 
 bool operator== (const cell& lhs, const cell& rhs) {
@@ -95,11 +94,11 @@ void Board::print_board_row (int row) {
     }
 }
 
-char Board::get_cell(cell coord){
+char Board::get_cell (cell coord){
     return board[coord.row][coord.column];
 }
 
-void Board::change_cell(cell coord, char c){
+void Board::change_cell (cell coord, char c){
     board[coord.row][coord.column]=c;
 }
 
@@ -114,6 +113,10 @@ cell Board::get_king_cell (){
     return cell {-1, -1};
 }
 
+void Board::del_piece(cell cell) {
+    change_cell(cell, ' ');
+}
+
 void UI::print_board (Board& board) {
     std::cout << "  1 2 3 4 5 6 7 8 9" << '\n';
     for (int row = 0; row < 9; ++row){
@@ -123,11 +126,11 @@ void UI::print_board (Board& board) {
     }
 }
 
-int UI::get_row_coord(char row){
+int UI::get_row_coord (char row){
     return static_cast<int>(row) - 97;
 }
 
-int UI::get_column_coord(int column){
+int UI::get_column_coord (int column){
     return column - 1;
 }
 
@@ -165,14 +168,14 @@ void UI::move_piece (Board& board, cell begin, cell end){
         board.change_cell(end, 'k');
         break;
     }
-    board.change_cell(begin, ' ');
+    board.del_piece(begin);
 }
 
-Taefl::Taefl(){
+Taefl::Taefl (){
     curent_player = attack;
 }
 
-void Taefl::game() {
+void Taefl::game () {
     Board board;
     board.init_board();
     UI ui;
@@ -180,6 +183,7 @@ void Taefl::game() {
     while (!((is_defense_win(board)) or (is_attack_win(board)))) {
         system("clear");
         ui.print_board(board);
+
         do {
             std::cout << "Choose piece" << '\n';
             begin = ui.input();
@@ -187,34 +191,51 @@ void Taefl::game() {
         ui.choose_piece(board, begin);
         system("clear");
         ui.print_board(board);
+
         do {
             std::cout << "Choose destination point" << '\n';
             end = ui.input();
         } while (!is_move_correct(board, begin, end));
+
         ui.move_piece(board, begin, end);
+
+        eat_pieces(board);
+
+        change_player();
+
         system("clear");
-        ui.print_board(board);
+    }
+    switch (curent_player) {
+        case attack:
+        std::cout << "Defense win" << '\n';
+        break;
+        case defense:
+        std::cout << "Attack win" << '\n';
     }
 }
 
 bool Taefl::is_defense_win (Board& board){
-    if (board.get_king_cell() == cell{0, 0}) {
-        return true;
-    }
-    if (board.get_king_cell() == cell{0, 8}) {
-        return true;
-    }
-    if (board.get_king_cell() == cell{8, 0}) {
-        return true;
-    }
-    if (board.get_king_cell() == cell{8, 8}) {
+    cell king = board.get_king_cell();
+    if ((king.row == 0) and (king.row == 8) and
+        (king.column == 0) and (king.column == 8)) {
         return true;
     }
     return false;
 }
 
 bool Taefl::is_attack_win (Board& board){
-    //TO DO
+    cell king = board.get_king_cell();
+    if ((king.row > 0) and (king.row < 8) and
+        (king.column > 0) and (king.column < 8)) {
+        char up = board.get_cell(cell {king.row - 1, king.column});
+        char left = board.get_cell(cell {king.row, king.column - 1});
+        char right = board.get_cell(cell {king.row, king.column + 1});
+        char down = board.get_cell(cell {king.row + 1, king.column});
+        if ((up == 'a') and (left == 'a')
+            and (right == 'a') and (down == 'a')) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -230,7 +251,7 @@ void Taefl::change_player () {
     }
 }
 
-bool Taefl::is_choose_correct (Board board, cell cell, player curent_player){
+bool Taefl::is_choose_correct (Board& board, cell cell, player curent_player){
     switch (curent_player) {
         case attack:
         if (board.get_cell(cell) == 'a'){
@@ -246,7 +267,7 @@ bool Taefl::is_choose_correct (Board board, cell cell, player curent_player){
     return false;
 }
 
-bool Taefl::is_move_correct (Board board, cell begin, cell end) {
+bool Taefl::is_move_correct (Board& board, cell begin, cell end) {
     if (board.get_cell(end) == ' '){
         if (begin.row == end.row) {
             for (int i = 1; i < abs(end.column-begin.column); ++i) {
@@ -268,7 +289,11 @@ bool Taefl::is_move_correct (Board board, cell begin, cell end) {
     return false;
 }
 
-int main(int argc, char const *argv[]) {
+void Taefl::eat_pieces(Board& board) {
+    //To Do
+}
+
+int main (int argc, char const *argv[]) {
     Taefl taefl;
     taefl.game();
     return 0;
