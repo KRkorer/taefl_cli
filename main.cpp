@@ -277,44 +277,34 @@ bool Taefl::is_choose_correct (Board& board, cell cell, player curent_player){
 }
 
 bool Taefl::is_move_correct (Board& board, cell begin, cell end) {
-    switch (board.get_piece(begin)) {
-        case 'A':
-        if ((board.get_piece(end) == ' ') and (end != cell {4, 4})) {
-            if (begin.row == end.row) {
-                for (int i = 1; i < abs(end.column-begin.column); ++i) {
+    if (board.get_piece(end) == ' '){
+        if (begin.row == end.row) {
+            for (int i = 1; i < abs(end.column-begin.column); ++i) {
+                if (end.column > begin.column) {
                     if (board.get_piece(cell {begin.row, begin.column + i}) != ' ') {
                         return false;
                     }
-                }
-                return true;
-            }
-            if (begin.column == end.column) {
-                for (int i = 1; i < abs(end.row-begin.row); ++i) {
-                    if (board.get_piece(cell {begin.row+i, begin.column}) != ' ') {
+                } else {
+                    if (board.get_piece(cell {begin.row, begin.column - i}) != ' ') {
                         return false;
                     }
                 }
-                return true;
             }
+            return true;
         }
-        default :
-        if (board.get_piece(end) == ' '){
-            if (begin.row == end.row) {
-                for (int i = 1; i < abs(end.column-begin.column); ++i) {
-                    if (board.get_piece(cell {begin.row, begin.column + i}) != ' ') {
+        if (begin.column == end.column) {
+            for (int i = 1; i < abs(end.row-begin.row); ++i) {
+                if (end.row > begin.row) {
+                    if (board.get_piece(cell {begin.row - i, begin.column}) != ' ') {
+                        return false;
+                    }
+                } else {
+                    if (board.get_piece(cell {begin.row - i, begin.column}) != ' ') {
                         return false;
                     }
                 }
-                return true;
             }
-            if (begin.column == end.column) {
-                for (int i = 1; i < abs(end.row-begin.row); ++i) {
-                    if (board.get_piece(cell {begin.row+i, begin.column}) != ' ') {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            return true;
         }
     }
     return false;
