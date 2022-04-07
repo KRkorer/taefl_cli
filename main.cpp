@@ -1,13 +1,16 @@
 #include <iostream>
 #include <cmath>
 
+
 struct cell {
     int row;
     int column;
 
 };
 
+
 enum player {attack, defense};
+
 
 class Board {
 private:
@@ -50,6 +53,7 @@ public:
     void eat_pieces (Board&);
 };
 
+
 bool operator== (const cell& lhs, const cell& rhs) {
  if ((lhs.row == rhs.row) and (lhs.column == rhs.column)){
      return true;
@@ -63,6 +67,7 @@ bool operator!= (const cell& lhs, const cell& rhs) {
  }
  return true;
 }
+
 
 Board::Board () {
     for (int row = 0; row < 9; ++row) {
@@ -105,8 +110,6 @@ char Board::get_piece (cell coord){
     return board[coord.row][coord.column];
 }
 
-
-
 void Board::change_cell (cell coord, char c){
     board[coord.row][coord.column]=c;
 }
@@ -125,6 +128,7 @@ cell Board::get_king_cell (){
 void Board::del_piece(cell cell) {
     change_cell(cell, ' ');
 }
+
 
 void UI::print_board (Board& board) {
     std::cout << "  1 2 3 4 5 6 7 8 9" << '\n';
@@ -179,6 +183,7 @@ void UI::move_piece (Board& board, cell begin, cell end){
     }
     board.del_piece(begin);
 }
+
 
 Taefl::Taefl (){
     curent_player = attack;
@@ -526,6 +531,7 @@ void Taefl::eat_pieces(Board& board) {
         }
     }
 }
+
 
 int main (int argc, char const *argv[]) {
     Taefl taefl;
