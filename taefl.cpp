@@ -289,13 +289,40 @@ void Taefl::change_player () {
 
 bool Taefl::is_choose_correct (Board& board, cell c_cell, player curent_player){
 
-    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    if ((c_cell.row == 0) and
     (board.get_piece(cell {c_cell.row, c_cell.column - 1}) != ' ') and
     (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
     (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
         return false;
     }
 
+    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    (c_cell.column == 0) and
+    (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
+        return false;
+    }
+
+    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column - 1}) != ' ') and
+    (c_cell.row == 8) and
+    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
+        return false;
+    }
+
+    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column - 1}) != ' ') and
+    (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
+    (c_cell.column == 8)) {
+        return false;
+    }
+
+    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column - 1}) != ' ') and
+    (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
+        return false;
+    }
 
     switch (curent_player) {
         case attack:
