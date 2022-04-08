@@ -211,6 +211,10 @@ bool Taefl::is_attack_win (Board& board){
         (right == 'a') and (down == 'a')) {
             return true;
         }
+    } else {
+        if (board.get_king_cell() == cell {-1 ,-1}) {
+            return true;
+        }
     }
     return false;
 }
