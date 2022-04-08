@@ -149,29 +149,31 @@ void UI::move_piece (Board& board, cell begin, cell end){
 
 void UI::show_move (Board& board, cell begin, cell end){
     if (begin.row == end.row) {
-        for (int i = 1; i <= abs(end.column-begin.column); ++i) {
+        for (int i = 1; i < abs(end.column-begin.column); ++i) {
             if (end.column > begin.column) {
-                board.change_cell(cell{begin.row, begin.column + i}, '-');
+                board.change_cell(cell{begin.row, begin.column + i}, 'x');
             } else {
-                board.change_cell(cell{begin.row, begin.column - i}, '-');
+                board.change_cell(cell{begin.row, begin.column - i}, 'x');
             }
         }
     }
     if (begin.column == end.column) {
-        for (int i = 1; i <= abs(end.row-begin.row); ++i) {
+        for (int i = 1; i < abs(end.row-begin.row); ++i) {
             if (end.row > begin.row) {
-            board.change_cell(cell{begin.row + i, begin.column}, '-');
+            board.change_cell(cell{begin.row + i, begin.column}, 'x');
             } else {
-            board.change_cell(cell{begin.row - i, begin.column}, '-');
+            board.change_cell(cell{begin.row - i, begin.column}, 'x');
             }
         }
     }
+    board.change_cell(end, 'X');
 }
 
 void UI::unshow_move (Board& board){
     for (int row = 0; row < 8; ++row){
         for (int column = 0; column < 8; ++column){
-            if (board.get_piece(cell{row, column}) == '-'){
+            if ((board.get_piece(cell{row, column}) == 'x') or
+            (board.get_piece(cell{row, column}) == 'X')){
                 board.del_piece(cell{row, column});
             }
         }
