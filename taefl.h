@@ -35,7 +35,10 @@ public:
     int get_column_coord (int);
     cell input ();
     void choose_piece (Board&, cell);
+    void unchoose_piece (Board&, cell);
     void move_piece (Board&, cell, cell);
+    void show_move (Board& , cell, cell);
+    void unshow_move (Board&);
 };
 
 

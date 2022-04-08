@@ -118,6 +118,20 @@ void UI::choose_piece (Board& board, cell cell){
     }
 }
 
+void UI::unchoose_piece(Board& board, cell cell){
+    switch (board.get_piece(cell)) {
+        case 'A':
+        board.change_cell(cell, 'a');
+        break;
+        case 'D':
+        board.change_cell(cell, 'd');
+        break;
+        case 'K':
+        board.change_cell(cell, 'k');
+        break;
+    }
+}
+
 void UI::move_piece (Board& board, cell begin, cell end){
     switch (board.get_piece(begin)) {
         case 'A':
@@ -131,6 +145,37 @@ void UI::move_piece (Board& board, cell begin, cell end){
         break;
     }
     board.del_piece(begin);
+}
+
+void UI::show_move (Board& board, cell begin, cell end){
+    if (begin.row == end.row) {
+        for (int i = 1; i <= abs(end.column-begin.column); ++i) {
+            if (end.column > begin.column) {
+                board.change_cell(cell{begin.row, begin.column + i}, '-');
+            } else {
+                board.change_cell(cell{begin.row, begin.column - i}, '-');
+            }
+        }
+    }
+    if (begin.column == end.column) {
+        for (int i = 1; i <= abs(end.row-begin.row); ++i) {
+            if (end.row > begin.row) {
+            board.change_cell(cell{begin.row + i, begin.column}, '-');
+            } else {
+            board.change_cell(cell{begin.row - i, begin.column}, '-');
+            }
+        }
+    }
+}
+
+void UI::unshow_move (Board& board){
+    for (int row = 0; row < 8; ++row){
+        for (int column = 0; column < 8; ++column){
+            if (board.get_piece(cell{row, column}) == '-'){
+                board.del_piece(cell{row, column});
+            }
+        }
+    }
 }
 
 
@@ -164,14 +209,23 @@ void Taefl::game () {
                 end = ui.input();
             } while (!is_move_correct(board, begin, end));
 
-            ui.move_piece(board, begin, end);
+            ui.show_move (board, begin, end);
+            system("clear");
+            ui.print_board(board);
+            ui.unshow_move(board);
 
             std::cout << "Confirm move (y/n)" << '\n';
             std::cin >> confirm;
             if (confirm == 'n') {
-                ui.choose_piece(board, end);
-                ui.move_piece(board,end, begin);
+                ui.unchoose_piece(board, begin);
+                system("clear");
+                ui.print_board(board);
+            } else {
+                ui.move_piece(board, begin, end);
+                system("clear");
+                ui.print_board(board);
             }
+
         } while (confirm == 'n');
 
 
