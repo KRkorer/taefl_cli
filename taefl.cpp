@@ -143,24 +143,37 @@ void Taefl::game () {
     board.init_board();
     UI ui;
     cell begin, end;
+    char confirm = 'n';
     while (!((is_defense_win(board)) or (is_attack_win(board)))) {
-        system("clear");
-        ui.print_board(board);
 
         do {
-            std::cout << "Choose piece" << '\n';
-            begin = ui.input();
-        } while (!is_choose_correct(board, begin, curent_player));
-        ui.choose_piece(board, begin);
-        system("clear");
-        ui.print_board(board);
+            system("clear");
+            ui.print_board(board);
 
-        do {
-            std::cout << "Choose destination point" << '\n';
-            end = ui.input();
-        } while (!is_move_correct(board, begin, end));
+            do {
+                std::cout << "Choose piece" << '\n';
+                begin = ui.input();
+            } while (!is_choose_correct(board, begin, curent_player));
 
-        ui.move_piece(board, begin, end);
+            ui.choose_piece(board, begin);
+            system("clear");
+            ui.print_board(board);
+
+            do {
+                std::cout << "Choose destination point" << '\n';
+                end = ui.input();
+            } while (!is_move_correct(board, begin, end));
+
+            ui.move_piece(board, begin, end);
+
+            std::cout << "Confirm move (y/n)" << '\n';
+            std::cin >> confirm;
+            if (confirm == 'n') {
+                ui.choose_piece(board, end);
+                ui.move_piece(board,end, begin);
+            }
+        } while (confirm == 'n');
+
 
         eat_pieces(board);
 
