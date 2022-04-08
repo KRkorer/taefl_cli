@@ -1,9 +1,9 @@
 CC=g++
 
-CFLAGS=-std=c++17 -Wall
+CFLAGS=-std=c++2a -Wall -O3 -o 
 
 all:
-	$(CC) main.cpp taefl.cpp  -o taefl_cli
+	$(CC) $(CFLAGS) taefl_cli main.cpp taefl.cpp
 
 clean:
 	rm -rf *.o taefl_cli
