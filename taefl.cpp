@@ -60,7 +60,7 @@ char Board::get_piece (cell coord){
 }
 
 void Board::change_cell (cell coord, char c){
-    board[coord.row][coord.column]=c;
+    board[coord.row][coord.column] = c;
 }
 
 cell Board::get_king_cell (){
@@ -287,15 +287,24 @@ void Taefl::change_player () {
     }
 }
 
-bool Taefl::is_choose_correct (Board& board, cell cell, player curent_player){
+bool Taefl::is_choose_correct (Board& board, cell c_cell, player curent_player){
+
+    if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ') and
+    (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
+        return false;
+    }
+
+
     switch (curent_player) {
         case attack:
-        if (board.get_piece(cell) == 'a'){
+        if (board.get_piece(c_cell) == 'a'){
             return true;
         }
         break;
         case defense:
-        if ((board.get_piece(cell) == 'd') or (board.get_piece(cell) == 'k')) {
+        if ((board.get_piece(c_cell) == 'd') or (board.get_piece(c_cell) == 'k')) {
             return true;
         }
         break;
