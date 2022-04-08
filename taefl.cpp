@@ -290,7 +290,7 @@ void Taefl::change_player () {
 bool Taefl::is_choose_correct (Board& board, cell c_cell, player curent_player){
 
     if ((board.get_piece(cell {c_cell.row - 1, c_cell.column}) != ' ') and
-    (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ') and
+    (board.get_piece(cell {c_cell.row, c_cell.column - 1}) != ' ') and
     (board.get_piece(cell {c_cell.row + 1, c_cell.column}) != ' ') and
     (board.get_piece(cell {c_cell.row, c_cell.column + 1}) != ' ')) {
         return false;
