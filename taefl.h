@@ -1,6 +1,9 @@
 #ifndef taefl_h
 #define taefl_h
 
+#include <fstream>
+
+
 struct cell {
     int row;
     int column;
@@ -25,8 +28,9 @@ public:
 
 class UI {
 private:
-
 public:
+    UI ();
+    ~UI ();
     void print_board (Board&);
     int get_row_coord (int);
     int get_column_coord (char);
@@ -36,6 +40,7 @@ public:
     void move_piece (Board&, cell, cell);
     void show_move (Board& , cell, cell);
     void unshow_move (Board&);
+    void save_move(cell, cell, player);
 };
 
 

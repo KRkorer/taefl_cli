@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <cmath>
@@ -64,6 +65,19 @@ void Board::del_piece(cell cell) {
     change_cell(cell, ' ');
 }
 
+
+UI::UI (){
+    std::ofstream afile("moves.txt", std::ios::trunc);
+    if (afile.is_open()) {
+        afile << "|turn|" << "side|" << "move|\n";
+    }
+    afile.close();
+}
+
+UI::~UI (){
+    std::ofstream afile("moves.txt", std::ios::trunc);
+    afile.close();
+}
 
 void UI::print_board (Board& board) {
     std::cout << " " << "\033[4m";
@@ -188,6 +202,25 @@ void UI::unshow_move (Board& board){
     }
 }
 
+void UI::save_move(cell begin, cell end, player curent_player){
+    static unsigned int turn = 1;
+    std::ofstream afile("moves.txt", std::ios::app);
+    if (afile.is_open()) {
+        afile << '|' << std::setw(4) << std::left << turn <<'|';
+        switch (curent_player) {
+            case attack:
+            afile << std::setw(4) << std::left << 'a' << '|';
+            break;
+            case defense:
+            afile << std::setw(4) << std::left << 'd' << '|';
+            break;
+        }
+        afile << static_cast<char>(begin.column + 97) << (begin.row + 1);
+        afile << static_cast<char>(end.column + 97) << (end.row + 1) << "|\n";
+        ++turn;
+    }
+}
+
 
 Taefl::Taefl (){
     curent_player = attack;
@@ -237,6 +270,7 @@ void Taefl::game () {
 
         } while (confirm == 'n');
 
+        ui.save_move(begin, end, curent_player);
 
         eat_pieces(board);
 
