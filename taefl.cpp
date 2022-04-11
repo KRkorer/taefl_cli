@@ -255,8 +255,8 @@ void Taefl::game () {
 
 bool Taefl::is_defense_win (Board& board){
     cell king = board.get_king_cell();
-    if ((king.row == 0) and (king.row == 8) and
-    (king.column == 0) and (king.column == 8)) {
+    if ((king == cell{0, 0}) or (king == cell{0, 8}) or
+    (king == cell{8, 0}) or (king == cell{8, 8})) {
         return true;
     }
     return false;
@@ -275,8 +275,37 @@ bool Taefl::is_attack_win (Board& board){
             return true;
         }
     } else {
-        if (board.get_king_cell() == cell {-1 ,-1}) {
-            return true;
+        if ((king.row == 0) and (king.column > 0) and (king.column < 8)) {
+            char left = board.get_piece(cell {king.row, king.column - 1});
+            char right = board.get_piece(cell {king.row, king.column + 1});
+            char down = board.get_piece(cell {king.row + 1, king.column});
+            if ((left == 'a') and (right == 'a') and (down == 'a')) {
+                return true;
+            }
+        }
+        if ((king.row == 8) and (king.column > 0) and (king.column < 8)) {
+            char up = board.get_piece(cell {king.row - 1, king.column});
+            char left = board.get_piece(cell {king.row, king.column - 1});
+            char right = board.get_piece(cell {king.row, king.column + 1});
+            if ((up == 'a') and (left == 'a') and (right == 'a')) {
+                return true;
+            }
+        }
+        if ((king.row > 0) and (king.row < 8) and (king.column == 0)) {
+            char up = board.get_piece(cell {king.row - 1, king.column});
+            char right = board.get_piece(cell {king.row, king.column + 1});
+            char down = board.get_piece(cell {king.row + 1, king.column});
+            if ((up == 'a') and (right == 'a') and (down == 'a')) {
+                return true;
+            }
+        }
+        if ((king.row > 0) and (king.row < 8) and (king.column == 8)) {
+            char up = board.get_piece(cell {king.row - 1, king.column});
+            char left = board.get_piece(cell {king.row, king.column - 1});
+            char down = board.get_piece(cell {king.row + 1, king.column});
+            if ((up == 'a') and (left == 'a') and (down == 'a')) {
+                return true;
+            }
         }
     }
     return false;
@@ -349,7 +378,9 @@ bool Taefl::is_choose_correct (Board& board, cell c_cell, player curent_player){
 bool Taefl::is_move_correct (Board& board, cell begin, cell end) {
     switch (board.get_piece(begin)) {
         case 'A':
-        if ((board.get_piece(end) == ' ') and (end != cell {4, 4})){
+        case 'D':
+        if ((board.get_piece(end) == ' ') and (end != cell {4, 4}) and
+        (end != cell{0, 0}) and (end != cell{0, 8}) and (end != cell{8, 0}) and (end != cell{8, 8})){
             if (begin.row == end.row) {
                 for (int i = 1; i < abs(end.column-begin.column); ++i) {
                     if (end.column > begin.column) {
@@ -380,7 +411,7 @@ bool Taefl::is_move_correct (Board& board, cell begin, cell end) {
             }
         }
         break;
-        default :
+        case 'K':
         if (board.get_piece(end) == ' '){
             if (begin.row == end.row) {
                 for (int i = 1; i < abs(end.column-begin.column); ++i) {
@@ -421,109 +452,86 @@ void Taefl::eat_pieces(Board& board) {
     for (int i = 0; i < 9; ++i) {
         for (int j = 0; j < 9; ++j) {
             curent_piece = board.get_piece (cell {i, j});
-            if ((i > 0) and (i < 8) and (j > 0) and (j < 8)) {
+            if ((i > 0) and (i < 9) and (j > 0) and (j < 9)) {
                 switch (curent_piece) {
                     case 'd':
-                    if ((board.get_piece(cell {i - 1, j}) == 'a') and
-                    (board.get_piece(cell {i, j - 1}) == 'a') and
-                    (board.get_piece(cell {i, j + 1}) == 'a') and
-                    (board.get_piece(cell {i + 1, j}) == 'a')) {
+                    if (((board.get_piece(cell {i - 1, j}) == 'a') and
+                    (board.get_piece(cell {i + 1, j}) == 'a')) or
+                    ((board.get_piece(cell {i, j - 1}) == 'a') and
+                    (board.get_piece(cell {i, j + 1}) == 'a'))) {
                         board.del_piece(cell{i, j});
                     }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
+                    if ((((board.get_piece(cell {i - 1, j}) == 'd') or
                     (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j - 1}) == 'd') or
+                    ((board.get_piece(cell {i + 1, j}) == 'd') or
+                    (board.get_piece(cell {i + 1, j}) == 'k'))) or
+                    (((board.get_piece(cell {i, j - 1}) == 'd') or
                     (board.get_piece(cell {i, j - 1}) == 'k')) and
                     ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    (board.get_piece(cell {i, j + 1}) == 'k'))))
+                     {
                         board.del_piece(cell{i, j});
                     }
                     break;
                 }
             }
-            if (i == 0) {
+            if (((i == 0) or (i == 8)) and (j == 1)) {
                 switch (curent_piece) {
                     case 'd':
-                    if ((board.get_piece(cell {i, j - 1}) == 'a') and
-                    (board.get_piece(cell {i, j + 1}) == 'a') and
-                    (board.get_piece(cell {i + 1, j}) == 'a')) {
+                    if (board.get_piece(cell {i, j + 1}) == 'a') {
                         board.del_piece(cell{i, j});
                     }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i, j + 1}) == 'd') or
+                    (board.get_piece(cell {i, j + 1}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
                 }
             }
-            if (i == 8){
+            if (((i == 0) or (i == 8)) and (j == 7)) {
                 switch (curent_piece) {
                     case 'd':
-                    if ((board.get_piece(cell {i - 1, j}) == 'a') and
-                    (board.get_piece(cell {i, j - 1}) == 'a') and
-                    (board.get_piece(cell {i, j + 1}) == 'a')) {
+                    if (board.get_piece(cell {i, j - 1}) == 'a') {
                         board.del_piece(cell{i, j});
                     }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k'))) {
+                    if ((board.get_piece(cell {i, j - 1}) == 'd') or
+                    (board.get_piece(cell {i, j - 1}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
                 }
             }
-            if (j == 0) {
+            if ((i == 1) and ((j == 0) or (j == 8))) {
                 switch (curent_piece) {
                     case 'd':
-                    if ((board.get_piece(cell {i - 1, j}) == 'a') and
-                    (board.get_piece(cell {i, j + 1}) == 'a') and
-                    (board.get_piece(cell {i + 1, j}) == 'a')) {
+                    if (board.get_piece(cell {i + 1, j}) == 'a') {
                         board.del_piece(cell{i, j});
                     }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i + 1, j}) == 'd') or
+                    (board.get_piece(cell {i + 1, j}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
                 }
             }
-            if (j == 8) {
+            if ((i == 7) and ((j == 0) or (j == 8))) {
                 switch (curent_piece) {
                     case 'd':
-                    if ((board.get_piece(cell {i - 1, j}) == 'a') and
-                    (board.get_piece(cell {i, j - 1}) == 'a') and
-                    (board.get_piece(cell {i + 1, j}) == 'a')) {
+                    if (board.get_piece(cell {i - 1, j}) == 'a') {
                         board.del_piece(cell{i, j});
                     }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i - 1, j}) == 'd') or
+                    (board.get_piece(cell {i - 1, j}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
@@ -532,14 +540,13 @@ void Taefl::eat_pieces(Board& board) {
             if ((i == 3) and (j == 4)) {
                 switch (curent_piece) {
                     case 'd':
+                    if (board.get_piece(cell {i - 1, j}) == 'a') {
+                        board.del_piece(cell{i, j});
+                    }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k'))) {
+                    if ((board.get_piece(cell {i - 1, j}) == 'd') or
+                    (board.get_piece(cell {i - 1, j}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
@@ -548,14 +555,13 @@ void Taefl::eat_pieces(Board& board) {
             if ((i == 4) and (j == 3)) {
                 switch (curent_piece) {
                     case 'd':
+                    if (board.get_piece(cell {i, j - 1}) == 'a') {
+                        board.del_piece(cell{i, j});
+                    }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i, j - 1}) == 'd') or
+                    (board.get_piece(cell {i, j - 1}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
@@ -564,14 +570,13 @@ void Taefl::eat_pieces(Board& board) {
             if ((i == 5) and (j == 4)) {
                 switch (curent_piece) {
                     case 'd':
+                    if (board.get_piece(cell {i + 1, j}) == 'a') {
+                        board.del_piece(cell{i, j});
+                    }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i, j - 1}) == 'd') or
-                    (board.get_piece(cell {i, j - 1}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i + 1, j}) == 'd') or
+                    (board.get_piece(cell {i + 1, j}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
@@ -580,14 +585,13 @@ void Taefl::eat_pieces(Board& board) {
             if ((i == 4) and (j == 5)) {
                 switch (curent_piece) {
                     case 'd':
+                    if (board.get_piece(cell {i, j + 1}) == 'a') {
+                        board.del_piece(cell{i, j});
+                    }
                     break;
                     case 'a':
-                    if (((board.get_piece(cell {i - 1, j}) == 'd') or
-                    (board.get_piece(cell {i - 1, j}) == 'k')) and
-                    ((board.get_piece(cell {i, j + 1}) == 'd') or
-                    (board.get_piece(cell {i, j + 1}) == 'k')) and
-                    ((board.get_piece(cell {i + 1, j}) == 'd') or
-                    (board.get_piece(cell {i + 1, j}) == 'k'))) {
+                    if ((board.get_piece(cell {i, j + 1}) == 'd') or
+                    (board.get_piece(cell {i, j + 1}) == 'k')) {
                         board.del_piece(cell{i, j});
                     }
                     break;
