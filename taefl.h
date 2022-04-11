@@ -16,9 +16,6 @@ private:
     char board[9][9];
 public:
     Board ();
-    void init_board ();
-    void  print_board ();
-    void  print_board_row (int );
     char get_piece (cell);
     void change_cell (cell, char);
     cell get_king_cell ();
@@ -31,8 +28,8 @@ private:
 
 public:
     void print_board (Board&);
-    int get_row_coord (char);
-    int get_column_coord (int);
+    int get_row_coord (int);
+    int get_column_coord (char);
     cell input ();
     void choose_piece (Board&, cell);
     void unchoose_piece (Board&, cell);
