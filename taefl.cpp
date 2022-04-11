@@ -67,13 +67,13 @@ void Board::del_piece(cell cell) {
 
 void UI::print_board (Board& board) {
     std::cout << " " << "\033[4m";
-    for (int i = 1; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
         std::cout << ' ';
-        std::cout << i;
+        std::cout << static_cast<char>(97 + i);
     }
     std::cout << ' ' << '\n';
     for (int row = 0; row < 9; ++row) {
-        std::cout <<"\033[0m" << static_cast<char>(97+row);
+        std::cout <<"\033[0m" << row + 1;
         std::cout << "\033[4m" << "\033[1m" << '|' << "\033[22m";
         for (int column=0; column < 9; ++column) {
             switch (board.get_piece(cell {row, column})) {
@@ -96,19 +96,19 @@ void UI::print_board (Board& board) {
     }
 }
 
-int UI::get_row_coord (char row){
-    return static_cast<int>(row) - 97;
+int UI::get_row_coord (int row){
+    return row - 1;
 }
 
-int UI::get_column_coord (int column){
-    return column - 1;
+int UI::get_column_coord (char column){
+    return static_cast<int>(column) - 97;
 }
 
  cell UI::input () {
-    std::cout << "Enter a row and column:" << '\n';
-    char row;
-    int column;
-    std::cin >> row >> column;
+    std::cout << "Enter a column and row:" << '\n';
+    int row;
+    char column;
+    std::cin >> column >> row;
     return cell {get_row_coord(row), get_column_coord(column)};
 }
 
