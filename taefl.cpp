@@ -68,10 +68,10 @@ void Board::del_piece(cell cell) {
 void UI::print_board (Board& board) {
     std::cout << " " << "\033[4m";
     for (int i = 1; i < 10; ++i) {
-        std::cout << "\033[1m" << '|' << "\033[22m";
+        std::cout << ' ';
         std::cout << i;
     }
-    std::cout << "\033[1m" << '|' << "\033[22m" << '\n';
+    std::cout << ' ' << '\n';
     for (int row = 0; row < 9; ++row) {
         std::cout <<"\033[0m" << static_cast<char>(97+row);
         std::cout << "\033[4m" << "\033[1m" << '|' << "\033[22m";
