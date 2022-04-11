@@ -66,13 +66,33 @@ void Board::del_piece(cell cell) {
 
 
 void UI::print_board (Board& board) {
-    std::cout << "  " << "1 2 3 4 5 6 7 8 9" << '\n';
+    std::cout << " " << "\033[4m";
+    for (int i = 1; i < 10; ++i) {
+        std::cout << "\033[1m" << '|' << "\033[22m";
+        std::cout << i;
+    }
+    std::cout << "\033[1m" << '|' << "\033[22m" << '\n';
     for (int row = 0; row < 9; ++row) {
-        std::cout << char(97+row) << ' ';
+        std::cout <<"\033[0m" << static_cast<char>(97+row);
+        std::cout << "\033[4m" << "\033[1m" << '|' << "\033[22m";
         for (int column=0; column < 9; ++column) {
-            std::cout << board.get_piece(cell{row, column}) << ' ';
+            switch (board.get_piece(cell {row, column})) {
+                case 'A':
+                case 'D':
+                case 'K':
+                case 'X':
+                case 'x':
+                std::cout << "\033[5m";
+                std::cout << board.get_piece(cell{row, column});
+                std::cout << "\033[25m";
+                std::cout << "\033[4m" << "\033[1m" << '|' << "\033[22m";
+                break;
+                default:
+                std::cout << board.get_piece(cell{row, column});
+                std::cout << "\033[4m" << "\033[1m" << '|' << "\033[22m";
+            }
         }
-        std::cout << '\n';
+        std::cout << '\n' << "\033[0m";
     }
 }
 
@@ -85,7 +105,7 @@ int UI::get_column_coord (int column){
 }
 
  cell UI::input () {
-    std::cout << "Enter a row and column" << '\n';
+    std::cout << "Enter a row and column:" << '\n';
     char row;
     int column;
     std::cin >> row >> column;
@@ -175,7 +195,6 @@ Taefl::Taefl (){
 
 void Taefl::game () {
     Board board;
-    //board.init_board();
     UI ui;
     cell begin, end;
     char confirm = 'n';
