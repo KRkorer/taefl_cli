@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <cmath>
 #include "taefl.h"
 
@@ -19,39 +21,23 @@ bool operator!= (const cell& lhs, const cell& rhs) {
 
 
 Board::Board () {
-    for (int row = 0; row < 9; ++row) {
-        for (int column=0; column < 9; ++column) {
-            board[row][column]=' ';
+    std::ifstream afile("board.txt", std::ios::in);
+    if (afile.is_open()) {
+        std::string line;
+        for (int row = 0; row < 9; ++row) {
+            std::getline(afile, line);
+            for (int column=0; column < 9; ++column) {
+                if (line[column] != '.'){
+                    board[row][column]=line[column];
+                } else {
+                    board[row][column]=' ';
+                }
+            }
         }
+        afile.close();
     }
-}
-
-void Board::init_board () {
-    board[0][3]=board[0][4]=board[0][5]='a';
-    board[1][4]='a';
-    board[2][4]='d';
-    board[3][0]='a'; board[3][4]='d'; board[3][8]='a';
-    board[4][0]=board[4][1]='a'; board[4][2]=board[4][3]='d';
-    board[4][4]='k';
-    board[4][5]=board[4][6]='d'; board[4][7]=board[4][8]='a';
-    board[5][0]='a'; board[5][4]='d'; board[5][8]='a';
-    board[6][4]='d';
-    board[7][4]='a';
-    board[8][3]=board[8][4]=board[8][5]='a';
-}
-
-void Board::print_board () {
-    for (int row = 0; row < 9; ++row) {
-        for (int column=0; column < 9; ++column) {
-            std::cout << board[row][column];
-        }
-        std::cout << '\n';
-    }
-}
-
-void Board::print_board_row (int row) {
-    for (int column = 0; column < 9; ++column){
-        std::cout << board[row][column] << ' ';
+    else {
+        std::cerr << "Unable to open file\n";
     }
 }
 
@@ -80,10 +66,12 @@ void Board::del_piece(cell cell) {
 
 
 void UI::print_board (Board& board) {
-    std::cout << "  1 2 3 4 5 6 7 8 9" << '\n';
-    for (int row = 0; row < 9; ++row){
-        std::cout << static_cast<char>(97+row) << ' ';
-        board.print_board_row(row);
+    std::cout << "  " << "1 2 3 4 5 6 7 8 9" << '\n';
+    for (int row = 0; row < 9; ++row) {
+        std::cout << char(97+row) << ' ';
+        for (int column=0; column < 9; ++column) {
+            std::cout << board.get_piece(cell{row, column}) << ' ';
+        }
         std::cout << '\n';
     }
 }
@@ -187,7 +175,7 @@ Taefl::Taefl (){
 
 void Taefl::game () {
     Board board;
-    board.init_board();
+    //board.init_board();
     UI ui;
     cell begin, end;
     char confirm = 'n';

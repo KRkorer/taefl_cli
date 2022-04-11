@@ -14,6 +14,5 @@ int main (int argc, char const *argv[]) {
             stop = true;
         }
     }
-
     return 0;
 }
