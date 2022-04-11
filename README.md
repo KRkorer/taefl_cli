@@ -9,6 +9,7 @@ Run `make`, without any parameters.
 ## How to use ?
 
 Run `taefl_cli`, follow the on-screen instructions.
+You can find information about previous move in moves.txt
 
 ## Rules
 
