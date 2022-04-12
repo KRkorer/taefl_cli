@@ -298,7 +298,7 @@ bool Taefl::is_defense_win (Board& board){
 
 bool Taefl::is_attack_win (Board& board){
     cell king = board.get_king_cell();
-    if (king == cel{-1, -1}) {
+    if (king == cell{-1, -1}) {
         return true;
     }
     if ((king.row > 0) and (king.row < 8) and
@@ -312,7 +312,7 @@ bool Taefl::is_attack_win (Board& board){
             return true;
         }
     } else {
-        if ((king.row == 0) and (king.column > 0) and (king.column < 8)) {
+        if ((king.row == 0) or (king == cell{5, 4})) {
             char left = board.get_piece(cell {king.row, king.column - 1});
             char right = board.get_piece(cell {king.row, king.column + 1});
             char down = board.get_piece(cell {king.row + 1, king.column});
@@ -320,7 +320,7 @@ bool Taefl::is_attack_win (Board& board){
                 return true;
             }
         }
-        if ((king.row == 8) and (king.column > 0) and (king.column < 8)) {
+        if ((king.row == 8) or (king == cell{3, 4})){
             char up = board.get_piece(cell {king.row - 1, king.column});
             char left = board.get_piece(cell {king.row, king.column - 1});
             char right = board.get_piece(cell {king.row, king.column + 1});
@@ -328,7 +328,7 @@ bool Taefl::is_attack_win (Board& board){
                 return true;
             }
         }
-        if ((king.row > 0) and (king.row < 8) and (king.column == 0)) {
+        if ((king.column == 0) or (king == cell{4, 5})){
             char up = board.get_piece(cell {king.row - 1, king.column});
             char right = board.get_piece(cell {king.row, king.column + 1});
             char down = board.get_piece(cell {king.row + 1, king.column});
@@ -336,11 +336,41 @@ bool Taefl::is_attack_win (Board& board){
                 return true;
             }
         }
-        if ((king.row > 0) and (king.row < 8) and (king.column == 8)) {
+        if ((king.column == 8) or (king == cell{4, 3})){
             char up = board.get_piece(cell {king.row - 1, king.column});
             char left = board.get_piece(cell {king.row, king.column - 1});
             char down = board.get_piece(cell {king.row + 1, king.column});
             if ((up == 'a') and (left == 'a') and (down == 'a')) {
+                return true;
+            }
+        }
+        if (((king.row == 0) and (king.column == 1)) or
+        ((king.row == 1) and (king.column == 0))) {
+            char right = board.get_piece(cell {king.row, king.column + 1});
+            char down = board.get_piece(cell {king.row + 1, king.column});
+            if ((right == 'a') and (down == 'a')) {
+                return true;
+            }
+        }
+        if (((king.row == 0) and (king.column == 7)) or
+        ((king.row == 1) and (king.column == 8))) {
+            char left = board.get_piece(cell {king.row, king.column - 1});
+            char down = board.get_piece(cell {king.row + 1, king.column});
+            if ((left == 'a') and (down == 'a')) {
+                return true;
+            }
+        }if (((king.row == 8) and (king.column == 1)) or
+        ((king.row == 7) and (king.column == 0))) {
+            char up = board.get_piece(cell {king.row - 1, king.column});
+            char right = board.get_piece(cell {king.row, king.column + 1});
+            if ((up == 'a') and (right == 'a')) {
+                return true;
+            }
+        }if (((king.row == 8) and (king.column == 7)) or
+        ((king.row == 7) and (king.column == 8))) {
+            char up = board.get_piece(cell {king.row - 1, king.column});
+            char left = board.get_piece(cell {king.row, king.column - 1});
+            if ((up == 'a') and (left == 'a')) {
                 return true;
             }
         }
