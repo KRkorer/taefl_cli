@@ -298,6 +298,9 @@ bool Taefl::is_defense_win (Board& board){
 
 bool Taefl::is_attack_win (Board& board){
     cell king = board.get_king_cell();
+    if (king == cel{-1, -1}) {
+        return true;
+    }
     if ((king.row > 0) and (king.row < 8) and
     (king.column > 0) and (king.column < 8)) {
         char up = board.get_piece(cell {king.row - 1, king.column});
